@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monument — Kingdom Timeline</title>
+<meta name="description" content="Live chapter-by-chapter timeline for the Rise of Kingdoms server event, with open times, countdowns, and capture windows in server time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#efe3c4;
+    --parchment-deep:#e2d1a4;
+    --vellum:#f7efd9;
+    --ink:#3a2a17;
+    --ink-soft:#6b5539;
+    --ink-faint:#8c795c;
+    --bronze:#9c7a3c;
+    --bronze-bright:#c9a24d;
+    --sage:#556b45;
+    --sage-soft:#eef1e8;
+    --ember:#a1452f;
+    --ember-soft:#f6e6e0;
+    --line:#c3ab78;
+    --shadow:rgba(58,42,23,0.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% 0%, #fbf4de 0%, var(--parchment) 55%, var(--parchment-deep) 100%);
+    font-family:'Crimson Text', serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:64px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- header ---------- */
+  header{
+    text-align:center;
+    padding:40px 20px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:clamp(1.6rem, 5vw, 2.3rem);
+    letter-spacing:0.5px;
+    margin:0 0 6px;
+  }
+  header p.tagline{
+    margin:0;
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:1.02rem;
+  }
+  .now-strip{
+    margin-top:16px;
+    font-size:0.82rem;
+    color:var(--ink-faint);
+    font-family:'Cinzel', serif;
+  }
+  .now-strip b{color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:600;}
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 18px;
+    position:relative;
+  }
+
+  /* ---------- new-chapter toast ---------- */
+  .chapter-toast{
+    position:fixed;
+    left:50%;
+    top:14px;
+    transform:translate(-50%, -140%);
+    z-index:50;
+    max-width:calc(100% - 32px);
+    width:400px;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--bronze-bright);
+    border-radius:9px;
+    box-shadow:0 10px 28px var(--shadow);
+    padding:13px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    opacity:0;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.5s ease;
+    pointer-events:none;
+  }
+  .chapter-toast.show{
+    transform:translate(-50%, 0);
+    opacity:1;
+  }
+  .chapter-toast .toast-icon{
+    font-family:'Cinzel', serif;
+    font-size:0.75rem;
+    color:#fff;
+    background:linear-gradient(90deg, var(--bronze), var(--ember));
+    border-radius:50%;
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .chapter-toast .toast-text{font-size:0.88rem; line-height:1.3;}
+  .chapter-toast .toast-text b{font-family:'Cinzel', serif; display:block; font-size:0.8rem; color:var(--ember); margin-bottom:2px;}
+
+  .season-banner{
+    margin:28px 0 0;
+    padding:16px 18px;
+    text-align:center;
+    background:var(--sage-soft);
+    border:1px solid var(--sage);
+    border-radius:6px;
+    font-family:'Cinzel', serif;
+    font-size:0.95rem;
+    color:var(--sage);
+    display:none;
+  }
+
+  /* ---------- section labels ---------- */
+  .section-label{
+    margin:38px 0 12px;
+    font-family:'Cinzel', serif;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+    opacity:0.6;
+  }
+
+  /* ---------- hero (happening now) ---------- */
+  .hero{
+    position:relative;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px 24px 22px;
+    box-shadow:0 6px 20px var(--shadow);
+    overflow:hidden;
+    transition:box-shadow 0.6s ease;
+  }
+  .hero.just-changed{
+    animation:heroPulse 1.8s ease;
+  }
+  @keyframes heroPulse{
+    0%{box-shadow:0 0 0 0 rgba(201,162,77,0.55), 0 6px 20px var(--shadow);}
+    40%{box-shadow:0 0 0 10px rgba(201,162,77,0), 0 6px 20px var(--shadow);}
+    100%{box-shadow:0 6px 20px var(--shadow);}
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--ember), var(--bronze-bright));
+  }
+  .hero-eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:0.68rem;
+    letter-spacing:0.6px;
+    color:var(--ember);
+    margin:0 0 8px;
+  }
+  .hero-title{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0 0 4px;
+  }
+  .hero-sub{
+    font-size:1rem;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+  }
+  .hero-progress-track{
+    height:8px;
+    border-radius:5px;
+    background:rgba(58,42,23,0.08);
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .hero-progress-fill{
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg, var(--bronze), var(--ember));
+    transition:width 1s ease;
+  }
+  .hero-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    font-size:0.85rem;
+    color:var(--ink-faint);
+  }
+  .hero-countdown{
+    font-family:'Cinzel', serif;
+    color:var(--ember);
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .hero-countdown-line{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--line);
+    font-size:0.95rem;
+    color:var(--ink);
+  }
+  .num{
+    font-weight:600;
+    color:var(--ember);
+  }
+  .hero-capture{
+    margin-top:14px;
+    padding:13px 15px;
+    border-radius:7px;
+    background:rgba(161,69,47,0.08);
+    border:1px solid rgba(161,69,47,0.4);
+  }
+  .hero-capture + .hero-capture{margin-top:8px;}
+  .hero-capture.opened{
+    background:var(--sage-soft);
+    border-color:var(--sage);
+  }
+  .cap-label{
+    font-family:'Cinzel', serif;
+    font-size:0.7rem;
+    color:var(--ember);
+    margin:0 0 5px;
+  }
+  .hero-capture.opened .cap-label{color:var(--sage);}
+  .cap-time{
+    font-size:1.05rem;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 2px;
+  }
+  .cap-status{
+    font-size:0.92rem;
+    color:var(--sage);
+    margin:0;
+    font-weight:600;
+  }
+
+  /* ---------- upcoming list ---------- */
+  .up-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .up-card{
+    background:rgba(255,255,255,0.3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .up-card:hover{box-shadow:0 3px 10px var(--shadow); border-color:var(--bronze);}
+  .up-card:focus-visible{outline:2px solid var(--ember); outline-offset:2px;}
+  .up-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 15px;
+  }
+  .up-num{
+    font-family:'Cinzel', serif;
+    font-size:0.78rem;
+    color:var(--bronze);
+    width:22px;
+    flex-shrink:0;
+    text-align:center;
+  }
+  .up-titles{flex:1; min-width:0;}
+  .up-title{
+    font-family:'Cinzel', serif;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  .up-sub{
+    font-size:0.8rem;
+    color:var(--ink-faint);
+    font-style:italic;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .up-when{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:2px;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .up-when .date{
+    font-size:0.78rem;
+    color:var(--ink);
+    font-weight:600;
+  }
+  .chevron{
+    font-size:0.7rem;
+    color:var(--ink-faint);
+    transition:transform 0.25s ease;
+    flex-shrink:0;
+  }
+  .up-card.open .chevron{transform:rotate(180deg);}
+  .up-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease;
+  }
+  .up-card.open .up-body{border-top:1px solid var(--line);}
+  .up-body-inner{padding:12px 15px 15px;}
+  .up-body-inner p{margin:0 0 6px; font-size:0.88rem; color:var(--ink-soft);}
+  .up-body-inner .bonus-line{
+    font-size:0.82rem;
+    color:var(--ember);
+    margin-top:6px;
+    font-weight:600;
+  }
+
+  /* ---------- completed accordion ---------- */
+  .completed-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    background:var(--sage-soft);
+    border:1px solid var(--sage);
+    border-radius:8px;
+    cursor:pointer;
+    font-family:'Cinzel', serif;
+    font-size:0.85rem;
+    color:var(--sage);
+  }
+  .completed-toggle:hover{filter:brightness(0.98);}
+  .completed-toggle .chevron{color:var(--sage);}
+  .completed-list{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.35s ease;
+  }
+  .completed-list.open{margin-top:10px;}
+  .completed-list-inner{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .done-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 14px;
+    background:rgba(255,255,255,0.35);
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:0.86rem;
+  }
+  .done-row .name{color:var(--ink); font-weight:600;}
+  .done-row .date{color:var(--ink-faint); white-space:nowrap; font-size:0.8rem;}
+
+  footer{
+    max-width:640px;
+    margin:36px auto 0;
+    padding:0 18px;
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    font-style:italic;
+  }
+  footer .signature{
+    display:block;
+    margin-top:8px;
+    font-family:'Cinzel', serif;
+    font-style:normal;
+    font-weight:700;
+    font-size:0.72rem;
+    letter-spacing:0.6px;
+    color:var(--bronze);
+  }
+</style>
+</head>
+<body>
+
+<div class="chapter-toast" id="chapterToast" role="status" aria-live="polite">
+  <span class="toast-icon">✦</span>
+  <span class="toast-text" id="chapterToastText"></span>
+</div>
+
+<header>
+  <h1>Monument</h1>
+  <p class="tagline">Kingdom event timeline — Rise of Kingdoms server time</p>
+  <div class="now-strip">Now: <b id="nowClock">—</b></div>
+</header>
+
+<main>
+  <div class="season-banner" id="seasonBanner">All chapters have concluded — the season has ended.</div>
+
+  <div id="heroSlot"></div>
+
+  <div class="section-label" id="upcomingLabel">Upcoming</div>
+  <div class="up-list" id="upcomingList"></div>
+
+  <div class="section-label">Completed</div>
+  <div class="completed-toggle" id="completedToggle" role="button" tabindex="0" aria-expanded="false">
+    <span id="completedSummary">— chapters completed</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="completed-list" id="completedList">
+    <div class="completed-list-inner" id="completedListInner"></div>
+  </div>
+</main>
+
+<footer>All times UTC. Updates automatically — no need to refresh.
+  <span class="signature">✦ Created by XTiT ✦</span>
+</footer>
+
+<script>
+/* =====================================================================
+   HOW TO UPDATE THIS PAGE
+   ---------------------------------------------------------------------
+   This is the only part of the file you should need to touch later.
+
+   1. When a new chapter opens with an official confirmed time, move it
+      out of `chain` below and into `history` as a completed/fixed entry
+      (once it finishes) — or just leave it in `chain` and let the page
+      auto-advance through it on its own; no edits needed day to day.
+      The page already swaps the "in progress" chapter out for the next
+      one automatically the moment the clock passes its end time, and
+      flashes a banner + a highlight on the hero card so the change is
+      noticeable — you don't need to do anything for that to happen.
+
+   2. To add chapters beyond #21 once Anthropic/RoK announces them,
+      append a new object to the end of `chain`:
+        {n:22, title:"...", sub:"...", hours:120}
+      `hours` is that chapter's official duration. Start/end times are
+      calculated automatically by stacking onto the chapter before it,
+      starting from ANCHOR_START.
+
+   3. `bonus` (optional) marks a capture window that opens some hours
+      after a chapter ends, e.g. a Pass, Shrine, or Lost Temple:
+        bonus:[{label:"Shrine", hoursAfter:24}]
+
+   4. If official chapter durations ever change, only ANCHOR_START and
+      the `hours` values need editing — everything downstream (dates,
+      countdowns, completed/upcoming grouping) recalculates itself.
+   ===================================================================== */
+
+/* ---------- CONFIRMED HISTORY (fixed dates, not auto-chained) ---------- */
+const history = [
+  {n:1, title:"The Bud Awakens", sub:"20,000 Governors Entered the Bronze Age", done:"2026-08-17T00:00:00Z"},
+  {n:2, title:"Uncovering Clouds", sub:"All Governors Explored 30,000,000 Fog Blocks Together", done:"2026-08-18T00:00:00Z"},
+  {n:3, title:"Cruel Conflict", sub:"200,000 Barbarian Troops Were Defeated", done:"2026-08-18T00:00:00Z"},
+  {n:4, title:"Iron Age", sub:"4,000 Governors Entered the Iron Age", done:"2026-08-18T00:00:00Z"},
+  {n:5, title:"First Sanctums", sub:"65 Sanctums Occupied For The First Time", done:"2026-08-20T00:00:00Z"},
+  {n:6, title:"Clarion Call", sub:"Your Alliance Defeated 40 Lvl 1+ Barbarian Forts", done:"2026-08-24T00:00:00Z"},
+  {n:7, title:"The Family", sub:"30 Alliances Have 65 Members", done:"2026-08-24T00:00:00Z"},
+  {n:8, title:"Initial Expansion", sub:"500 Alliance Flags Built in the Kingdom", done:"2026-08-25T00:00:00Z"},
+  {n:9, title:"Blessings of the Altars", sub:"Your Alliance Controlled an Altar at the End", done:"2026-08-30T00:00:00Z"},
+  {n:10, title:"Dark Age", sub:"1,000 Governors Entered the Dark Age", done:"2026-08-30T00:00:00Z"},
+  {n:11, title:"Siegecraft", sub:"Your Alliance Defeated 100 Lvl 2+ Barbarian Forts", done:"2026-09-03T00:00:00Z"},
+  {n:12, title:"Wild Competition", sub:"Compete to Enter the Top 20 Alliances", done:"2026-09-08T00:00:00Z"},
+];
+
+/* ---------- AUTO-CHAINED CHAPTERS ----------
+   Anchor = confirmed start of Chapter 13 (its end minus its duration).
+   From here, every following chapter's start/end is computed automatically
+   by stacking each chapter's official duration back-to-back. As real time
+   passes, each chapter's status (upcoming -> in progress -> completed)
+   updates itself and the next chapter opens automatically — no manual
+   input needed to "continue" the event. */
+const ANCHOR_START = new Date("2026-09-08T13:10:00Z"); // Chapter 13 opens here
+
+const chain = [
+  {n:13, title:"None Shall Pass", sub:"Your Alliance Controlled a Level 2 Pass at the End", hours:120},
+  {n:14, title:"Barbarian Buster", sub:"All Governors Defeated 40,000 Lvl 18+ Barbarian Troops", hours:120},
+  {n:15, title:"Vanishing Threats", sub:"Your Alliance Defeated 100 Lvl 3+ Barbarian Forts", hours:96,
+    bonus:[{label:"Level 3 Pass", hoursAfter:24}]},
+  {n:16, title:"Glory of the Shrines", sub:"Your Alliance Controlled a Shrine at the End", hours:168,
+    bonus:[{label:"Shrine", hoursAfter:24}]},
+  {n:17, title:"Feudal Age", sub:"200 Governors Entered the Feudal Age", hours:120},
+  {n:18, title:"Coup de Grace", sub:"Your Alliance Defeated 50 Lvl 4+ Barbarian Forts", hours:96},
+  {n:19, title:"Ultimate Clarity", sub:"Explored All Fog Blocks in the Kingdom", hours:168},
+  {n:20, title:"The Great Empire", sub:"8 Alliances Have 90 Members", hours:240,
+    bonus:[{label:"Lost Temple", hoursAfter:24}]},
+  {n:21, title:"The Last Golden Apple", sub:"Your Alliance Controlled the Lost Temple at the End", hours:240},
+];
+
+// Compute start/end for every chained chapter automatically
+(function buildChain(){
+  let cursor = new Date(ANCHOR_START);
+  chain.forEach(ch => {
+    ch.start = new Date(cursor);
+    ch.end = new Date(cursor.getTime() + ch.hours*3600*1000);
+    if(ch.bonus){
+      ch.bonus.forEach(b => { b.time = new Date(ch.end.getTime() + b.hoursAfter*3600*1000); });
+    }
+    cursor = new Date(ch.end);
+  });
+})();
+
+const SEASON_END = chain[chain.length-1].end;
+
+/* ---------- helpers ---------- */
+function fmtShort(d){
+  const opts = {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'UTC'};
+  const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(d);
+  const get = t => (parts.find(p=>p.type===t)||{}).value || '';
+  return `${get('month')} ${get('day')}, ${get('hour')}:${get('minute')} UTC`;
+}
+function fmtCountdown(ms){
+  if(ms <= 0) return "0 minutes";
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [];
+  if(days) parts.push(days + (days === 1 ? " day" : " days"));
+  if(hours || days) parts.push(hours + (hours === 1 ? " hour" : " hours"));
+  parts.push(minutes + (minutes === 1 ? " minute" : " minutes"));
+  return parts.join(", ");
+}
+function fmtCountdownHTML(ms){
+  if(ms <= 0) return `<span class="num">0</span> minutes`;
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [];
+  if(days) parts.push(`<span class="num">${days}</span> ${days === 1 ? "day" : "days"}`);
+  if(hours || days) parts.push(`<span class="num">${hours}</span> ${hours === 1 ? "hour" : "hours"}`);
+  parts.push(`<span class="num">${minutes}</span> ${minutes === 1 ? "minute" : "minutes"}`);
+  return parts.join(", ");
+}
+function fmtClock(d){
+  const opts = {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'UTC'};
+  const parts = new Intl.DateTimeFormat('en-CA', opts).formatToParts(d);
+  const get = t => parts.find(p=>p.type===t).value;
+  return `${get('year')}/${get('month')}/${get('day')} — ${get('hour')}:${get('minute')}:${get('second')} UTC`;
+}
+const nowClock = document.getElementById('nowClock');
+const seasonBanner = document.getElementById('seasonBanner');
+const heroSlot = document.getElementById('heroSlot');
+const upcomingLabel = document.getElementById('upcomingLabel');
+const upcomingList = document.getElementById('upcomingList');
+const completedToggle = document.getElementById('completedToggle');
+const completedSummary = document.getElementById('completedSummary');
+const completedList = document.getElementById('completedList');
+const completedListInner = document.getElementById('completedListInner');
+const chapterToast = document.getElementById('chapterToast');
+const chapterToastText = document.getElementById('chapterToastText');
+
+const openUpCards = new Set();
+let completedOpen = false;
+
+// Tracks which chapter was live on the previous render so we can detect
+// the automatic hand-off from one chapter to the next and announce it.
+let lastLiveChapterNum = undefined; // undefined = not yet initialized
+let toastTimer = null;
+
+function announceChapterChange(newChapter, seasonJustEnded){
+  clearTimeout(toastTimer);
+  if(seasonJustEnded){
+    chapterToastText.innerHTML = `<b>Season complete</b>All chapters have concluded.`;
+  } else if(newChapter){
+    chapterToastText.innerHTML = `<b>Chapter ${newChapter.n} has begun</b>${newChapter.title}`;
+  } else {
+    return;
+  }
+  chapterToast.classList.add('show');
+  toastTimer = setTimeout(() => chapterToast.classList.remove('show'), 6000);
+}
+
+function render(){
+  const now = new Date();
+  nowClock.textContent = fmtClock(now);
+  const seasonOver = now >= SEASON_END;
+  seasonBanner.style.display = seasonOver ? 'block' : 'none';
+
+  // classify chain chapters
+  const live = chain.find(ch => now >= ch.start && now < ch.end);
+  const doneChain = chain.filter(ch => now >= ch.end);
+  const upcomingChain = chain.filter(ch => now < ch.start);
+
+  // ---- detect automatic chapter hand-off ----
+  const currentLiveNum = live ? live.n : (seasonOver ? 'season-over' : null);
+  if(lastLiveChapterNum !== undefined && currentLiveNum !== lastLiveChapterNum){
+    if(seasonOver && currentLiveNum === 'season-over'){
+      announceChapterChange(null, true);
+    } else if(live){
+      announceChapterChange(live, false);
+    }
+  }
+  lastLiveChapterNum = currentLiveNum;
+
+  /* ---------- hero ---------- */
+  const heroJustChanged = heroSlot.dataset.liveNum !== undefined && heroSlot.dataset.liveNum !== String(currentLiveNum);
+  heroSlot.innerHTML = '';
+  if(live){
+    const bonusHTML = (live.bonus||[]).map(b=>{
+      const opened = now >= b.time;
+      if(opened){
+        return `<div class="hero-capture opened">
+          <p class="cap-label">${b.label}</p>
+          <p class="cap-status">Open now — go capture it</p>
+        </div>`;
+      }
+      return `<div class="hero-capture">
+        <p class="cap-label">🔑 ${b.label}</p>
+        <p class="cap-time">Opens: ${fmtShort(b.time)}</p>
+        <p class="cap-time">${fmtCountdownHTML(b.time - now)} left</p>
+      </div>`;
+    }).join('');
+    const pct = Math.min(100, Math.max(0, ((now - live.start) / (live.end - live.start)) * 100));
+    heroSlot.innerHTML = `
+      <div class="hero${heroJustChanged ? ' just-changed' : ''}">
+        <p class="hero-eyebrow">Chapter ${live.n} · in progress</p>
+        <h2 class="hero-title">${live.title}</h2>
+        <p class="hero-sub">${live.sub}</p>
+        <div class="hero-progress-track"><div class="hero-progress-fill" style="width:${pct}%"></div></div>
+        <div class="hero-meta">
+          <span>Opened: ${fmtShort(live.start)}</span>
+          <span class="hero-countdown">Ends: ${fmtShort(live.end)}</span>
+        </div>
+        <div class="hero-countdown-line">${fmtCountdownHTML(live.end - now)} left</div>
+        ${bonusHTML}
+      </div>`;
+  } else if(upcomingChain.length){
+    const next = upcomingChain[0];
+    heroSlot.innerHTML = `
+      <div class="hero">
+        <p class="hero-eyebrow">Chapter ${next.n} · opens next</p>
+        <h2 class="hero-title">${next.title}</h2>
+        <p class="hero-sub">${next.sub}</p>
+        <div class="hero-meta" style="margin-top:4px;">
+          <span>Opens: ${fmtShort(next.start)}</span>
+        </div>
+        <div class="hero-countdown-line">${fmtCountdownHTML(next.start - now)} until it opens</div>
+      </div>`;
+  } else {
+    heroSlot.innerHTML = `
+      <div class="hero${heroJustChanged ? ' just-changed' : ''}">
+        <p class="hero-eyebrow">Season complete</p>
+        <h2 class="hero-title">All chapters concluded</h2>
+        <p class="hero-sub">The last chapter ended ${fmtShort(SEASON_END)}.</p>
+      </div>`;
+  }
+  heroSlot.dataset.liveNum = String(currentLiveNum);
+
+  /* ---------- upcoming list (excludes the live chapter, shown in hero) ---------- */
+  upcomingLabel.style.display = upcomingChain.length ? 'flex' : 'none';
+  upcomingList.innerHTML = '';
+  upcomingChain.forEach(ch => {
+    const cardId = 'up-' + ch.n;
+    const isOpen = openUpCards.has(cardId);
+    const card = document.createElement('div');
+    card.className = 'up-card' + (isOpen ? ' open' : '');
+    card.tabIndex = 0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-expanded', isOpen);
+    card.dataset.id = cardId;
+
+    // Bonus/capture info now shown ONLY inside the expanded body (not in the collapsed header preview)
+    const bonusLines = (ch.bonus||[]).map(b => `<p class="bonus-line">🔑 ${b.label} opens ${fmtShort(b.time)}</p>`).join('');
+
+    card.innerHTML = `
+      <div class="up-head">
+        <span class="up-num">${ch.n}</span>
+        <div class="up-titles">
+          <div class="up-title">${ch.title}</div>
+          <div class="up-sub">${ch.sub}</div>
+        </div>
+        <span class="up-when"><span class="date">${fmtShort(ch.start)}</span></span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="up-body"><div class="up-body-inner">
+        <p>Opens: ${fmtShort(ch.start)}</p>
+        <p>Ends: ${fmtShort(ch.end)}</p>
+        ${bonusLines}
+      </div></div>
+    `;
+    const body = card.querySelector('.up-body');
+    if(isOpen){
+      requestAnimationFrame(()=>{ body.style.maxHeight = body.scrollHeight + 'px'; });
+    }
+    upcomingList.appendChild(card);
+  });
+
+  /* ---------- completed summary ---------- */
+  const doneRows = [
+    ...history.map(h => ({n:h.n, title:h.title, date:new Date(h.done)})),
+    ...doneChain.map(c => ({n:c.n, title:c.title, date:c.end}))
+  ];
+  completedSummary.textContent = `${doneRows.length} chapter${doneRows.length===1?'':'s'} completed`;
+  completedListInner.innerHTML = doneRows.map(r => `
+    <div class="done-row">
+      <span class="name">${r.n}. ${r.title}</span>
+      <span class="date">${fmtShort(r.date)}</span>
+    </div>
+  `).join('');
+  if(completedOpen){
+    completedList.style.maxHeight = completedList.scrollHeight + 'px';
+  }
+}
+
+upcomingList.addEventListener('click', e => {
+  const card = e.target.closest('.up-card');
+  if(!card) return;
+  toggleUp(card);
+});
+upcomingList.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){
+    const card = e.target.closest('.up-card');
+    if(!card) return;
+    e.preventDefault();
+    toggleUp(card);
+  }
+});
+function toggleUp(card){
+  const body = card.querySelector('.up-body');
+  const id = card.dataset.id;
+  const isOpen = card.classList.contains('open');
+  if(isOpen){
+    body.style.maxHeight = null;
+    card.classList.remove('open');
+    card.setAttribute('aria-expanded','false');
+    openUpCards.delete(id);
+  } else {
+    card.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    card.setAttribute('aria-expanded','true');
+    openUpCards.add(id);
+  }
+}
+
+function toggleCompleted(){
+  completedOpen = !completedOpen;
+  completedToggle.setAttribute('aria-expanded', completedOpen);
+  completedToggle.querySelector('.chevron').style.transform = completedOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  completedList.classList.toggle('open', completedOpen);
+  completedList.style.maxHeight = completedOpen ? completedList.scrollHeight + 'px' : null;
+}
+completedToggle.addEventListener('click', toggleCompleted);
+completedToggle.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleCompleted(); }
+});
+
+render();
+setInterval(render, 60000); // refresh every minute so the clock and countdowns update live
+</script>
+</body>
+</html>
