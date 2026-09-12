@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en" class="gate-locked">
+<head>
+<meta charset="UTF-8">
+<script>
+  // Runs immediately, before the page paints, so a returning visitor on
+  // this same device/browser never sees the entry gate flash on screen.
+  // If they've already entered once before, skip it entirely and go
+  // straight to the unlocked page.
+  (function(){
+    try{
+      if(localStorage.getItem('monument_gate_seen') === '1'){
+        document.documentElement.classList.add('gate-skip');
+        document.documentElement.classList.remove('gate-locked');
+      }
+    }catch(e){}
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monument — Kingdom Timeline</title>
+<meta name="description" content="Live chapter-by-chapter timeline for the Rise of Kingdoms server event, with open times, countdowns, and capture windows in server time.">
+<meta name="theme-color" content="#efe3c4">
+<meta property="og:title" content="Monument — Kingdom Timeline">
+<meta property="og:description" content="Live chapter-by-chapter timeline for the Rise of Kingdoms server event, with open times, countdowns, and capture windows in server time.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#efe3c4;
+    --parchment-deep:#e2d1a4;
+    --vellum:#f7efd9;
+    --ink:#3a2a17;
+    --ink-soft:#6b5539;
+    --ink-faint:#8c795c;
+    --bronze:#9c7a3c;
+    --bronze-bright:#c9a24d;
+    --sage:#556b45;
+    --sage-soft:#eef1e8;
+    --ember:#a1452f;
+    --ember-soft:#f6e6e0;
+    --line:#c3ab78;
+    --shadow:rgba(58,42,23,0.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% 0%, #fbf4de 0%, var(--parchment) 55%, var(--parchment-deep) 100%);
+    font-family:'Crimson Text', serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:64px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- header ---------- */
+  header{
+    text-align:center;
+    padding:40px 20px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:clamp(1.6rem, 5vw, 2.3rem);
+    letter-spacing:0.5px;
+    margin:0 0 6px;
+  }
+  header h1 .orn{
+    color:var(--bronze-bright);
+    font-size:0.7em;
+    margin:0 8px;
+    vertical-align:middle;
+  }
+  .skip-link{
+    position:absolute;
+    left:-999px;
+    top:auto;
+    background:var(--ink);
+    color:var(--vellum);
+    padding:10px 16px;
+    border-radius:0 0 6px 0;
+    font-family:'Cinzel', serif;
+    font-size:0.8rem;
+    z-index:100;
+  }
+  .skip-link:focus{
+    left:0;
+    top:0;
+  }
+  noscript .noscript-banner{
+    display:block;
+    max-width:640px;
+    margin:20px auto;
+    padding:14px 18px;
+    background:var(--ember-soft);
+    border:1px solid var(--ember);
+    border-radius:6px;
+    color:var(--ember);
+    text-align:center;
+    font-size:0.9rem;
+  }
+  header p.tagline{
+    margin:0;
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:1.02rem;
+  }
+  .now-strip{
+    margin-top:16px;
+    font-size:0.82rem;
+    color:var(--ink-faint);
+    font-family:'Cinzel', serif;
+  }
+  .now-strip b{color:var(--ink-soft); font-variant-numeric:tabular-nums; font-weight:600;}
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 18px;
+    position:relative;
+    animation:fadeUp 0.7s ease both;
+  }
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @media (max-width:400px){
+    .hero{padding:20px 16px 18px;}
+    .hero-title{font-size:1.3rem;}
+    .up-head{padding:11px 12px;}
+    .up-sub{white-space:normal;}
+  }
+
+  /* ---------- new-chapter toast ---------- */
+  .chapter-toast{
+    position:fixed;
+    left:50%;
+    top:14px;
+    transform:translate(-50%, -140%);
+    z-index:50;
+    max-width:calc(100% - 32px);
+    width:400px;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--bronze-bright);
+    border-radius:9px;
+    box-shadow:0 10px 28px var(--shadow);
+    padding:13px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    opacity:0;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.5s ease;
+    pointer-events:none;
+  }
+  .chapter-toast.show{
+    transform:translate(-50%, 0);
+    opacity:1;
+  }
+  .chapter-toast .toast-icon{
+    font-family:'Cinzel', serif;
+    font-size:0.75rem;
+    color:#fff;
+    background:linear-gradient(90deg, var(--bronze), var(--ember));
+    border-radius:50%;
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .chapter-toast .toast-text{font-size:0.88rem; line-height:1.3;}
+  .chapter-toast .toast-text b{font-family:'Cinzel', serif; display:block; font-size:0.8rem; color:var(--ember); margin-bottom:2px;}
+
+  .season-banner{
+    margin:28px 0 0;
+    padding:16px 18px;
+    text-align:center;
+    background:var(--sage-soft);
+    border:1px solid var(--sage);
+    border-radius:6px;
+    font-family:'Cinzel', serif;
+    font-size:0.95rem;
+    color:var(--sage);
+    display:none;
+  }
+
+  /* ---------- section labels ---------- */
+  .section-label{
+    margin:38px 0 12px;
+    font-family:'Cinzel', serif;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+    opacity:0.6;
+  }
+
+  /* ---------- hero (happening now) ---------- */
+  .hero{
+    position:relative;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px 24px 22px;
+    box-shadow:0 6px 20px var(--shadow);
+    overflow:hidden;
+    transition:box-shadow 0.6s ease;
+  }
+  .hero.just-changed{
+    animation:heroPulse 1.8s ease;
+  }
+  @keyframes heroPulse{
+    0%{box-shadow:0 0 0 0 rgba(201,162,77,0.55), 0 6px 20px var(--shadow);}
+    40%{box-shadow:0 0 0 10px rgba(201,162,77,0), 0 6px 20px var(--shadow);}
+    100%{box-shadow:0 6px 20px var(--shadow);}
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--ember), var(--bronze-bright));
+  }
+  .hero-eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:0.68rem;
+    letter-spacing:0.6px;
+    color:var(--ember);
+    margin:0 0 8px;
+  }
+  .hero-title{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0 0 4px;
+  }
+  .hero-sub{
+    font-size:1rem;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+  }
+  .hero-progress-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .hero-progress-track{
+    flex:1;
+    height:8px;
+    border-radius:5px;
+    background:rgba(58,42,23,0.08);
+    overflow:hidden;
+  }
+  .hero-progress-pct{
+    font-family:'Cinzel', serif;
+    font-size:0.72rem;
+    color:var(--bronze);
+    font-variant-numeric:tabular-nums;
+    flex-shrink:0;
+    width:34px;
+    text-align:right;
+  }
+  .hero-progress-fill{
+    height:100%;
+    border-radius:5px;
+    background:linear-gradient(90deg, var(--bronze), var(--ember));
+    transition:width 1s ease;
+  }
+  .hero-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    font-size:0.85rem;
+    color:var(--ink-faint);
+  }
+  .hero-countdown{
+    font-family:'Cinzel', serif;
+    color:var(--ember);
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .hero-countdown-line{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--line);
+    font-size:0.95rem;
+    color:var(--ink);
+  }
+  .num{
+    font-weight:600;
+    color:var(--ember);
+  }
+  .hero-capture{
+    margin-top:14px;
+    padding:13px 15px;
+    border-radius:7px;
+    background:rgba(161,69,47,0.08);
+    border:1px solid rgba(161,69,47,0.4);
+  }
+  .hero-capture + .hero-capture{margin-top:8px;}
+  .hero-capture.opened{
+    background:var(--sage-soft);
+    border-color:var(--sage);
+  }
+  .cap-label{
+    font-family:'Cinzel', serif;
+    font-size:0.7rem;
+    color:var(--ember);
+    margin:0 0 5px;
+  }
+  .hero-capture.opened .cap-label{color:var(--sage);}
+  .cap-time{
+    font-size:1.05rem;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 2px;
+  }
+  .cap-status{
+    font-size:0.92rem;
+    color:var(--sage);
+    margin:0;
+    font-weight:600;
+  }
+
+  /* ---------- upcoming list ---------- */
+  .up-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .up-card{
+    background:rgba(255,255,255,0.3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .up-card:hover{box-shadow:0 3px 10px var(--shadow); border-color:var(--bronze);}
+  .up-card:focus-visible{outline:2px solid var(--ember); outline-offset:2px;}
+  .up-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 15px;
+  }
+  .up-num{
+    font-family:'Cinzel', serif;
+    font-size:0.78rem;
+    color:var(--bronze);
+    width:22px;
+    flex-shrink:0;
+    text-align:center;
+  }
+  .up-titles{flex:1; min-width:0;}
+  .up-title{
+    font-family:'Cinzel', serif;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  .up-sub{
+    font-size:0.8rem;
+    color:var(--ink-faint);
+    font-style:italic;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .up-when{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:2px;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .up-when .date{
+    font-size:0.78rem;
+    color:var(--ink);
+    font-weight:600;
+  }
+  .chevron{
+    font-size:0.7rem;
+    color:var(--ink-faint);
+    transition:transform 0.25s ease;
+    flex-shrink:0;
+  }
+  .up-card.open .chevron{transform:rotate(180deg);}
+  .up-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease;
+  }
+  .up-card.open .up-body{border-top:1px solid var(--line);}
+  .up-body-inner{padding:12px 15px 15px;}
+  .up-body-inner p{margin:0 0 6px; font-size:0.88rem; color:var(--ink-soft);}
+  .up-body-inner .bonus-line{
+    font-size:0.82rem;
+    color:var(--ember);
+    margin-top:6px;
+    font-weight:600;
+  }
+
+  /* ---------- completed accordion ---------- */
+  .about-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    background:var(--vellum);
+    border:1px solid var(--bronze);
+    border-radius:8px;
+    cursor:pointer;
+    font-family:'Cinzel', serif;
+    font-size:0.85rem;
+    color:var(--bronze);
+    margin-top:24px;
+  }
+  .about-toggle:hover{filter:brightness(0.98);}
+  .about-toggle:focus-visible{outline:2px solid var(--bronze); outline-offset:2px;}
+  .about-toggle .chevron{color:var(--bronze); font-size:0.7rem; transition:transform 0.25s ease; flex-shrink:0;}
+  .about-toggle.open .chevron{transform:rotate(180deg);}
+  .about-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.35s ease;
+  }
+  .about-body.open{margin-top:10px;}
+  .about-body-inner{
+    padding:14px 16px 16px;
+    background:rgba(255,255,255,0.3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:0.88rem;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .about-body-inner h3{
+    font-family:'Cinzel', serif;
+    font-size:0.78rem;
+    color:var(--ink);
+    margin:14px 0 6px;
+  }
+  .about-body-inner h3:first-child{margin-top:0;}
+  .about-body-inner ul{margin:0; padding-left:20px;}
+  .about-body-inner li{margin-bottom:6px;}
+  .about-body-inner .term{font-weight:600; color:var(--ink);}
+  .completed-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    background:var(--sage-soft);
+    border:1px solid var(--sage);
+    border-radius:8px;
+    cursor:pointer;
+    font-family:'Cinzel', serif;
+    font-size:0.85rem;
+    color:var(--sage);
+  }
+  .completed-toggle:hover{filter:brightness(0.98);}
+  .completed-toggle:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+  .completed-toggle .chevron{color:var(--sage);}
+  .completed-list{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.35s ease;
+  }
+  .completed-list.open{margin-top:10px;}
+  .completed-list-inner{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .done-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 14px;
+    background:rgba(255,255,255,0.35);
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:0.86rem;
+  }
+  .done-row .name{color:var(--ink); font-weight:600;}
+  .done-row .date{color:var(--ink-faint); white-space:nowrap; font-size:0.8rem;}
+
+  /* ---------- members / visitor counter ---------- */
+  .members-card{
+    margin-top:24px;
+    text-align:center;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 20px;
+    box-shadow:0 6px 20px var(--shadow);
+  }
+  .members-eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:0.68rem;
+    letter-spacing:0.6px;
+    color:var(--ember);
+    margin:0 0 8px;
+  }
+  .members-count-line{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:6px 0 4px;
+    font-size:1rem;
+    color:var(--ink);
+  }
+  .members-badge-img{
+    display:inline-block;
+    vertical-align:middle;
+  }
+  .members-count-fallback{
+    font-size:0.9rem;
+    color:var(--ink-faint);
+    margin:4px 0 10px;
+  }
+  .members-note{
+    margin:12px 0 0;
+    font-size:0.76rem;
+    color:var(--ink-faint);
+    font-style:italic;
+  }
+
+  /* ---------- entry gate ---------- */
+  html.gate-locked, html.gate-locked body{
+    overflow:hidden;
+    height:100%;
+  }
+  .site-content{
+    transition:filter 0.5s ease, opacity 0.5s ease;
+  }
+  html.gate-locked .site-content{
+    filter:blur(6px);
+    opacity:0.5;
+    pointer-events:none;
+  }
+  /* Applied instantly (before first paint) for a device that has
+     already entered before — the gate never renders at all, so
+     returning visitors go straight to the unlocked page. */
+  html.gate-skip .gate{
+    display:none;
+  }
+  html.gate-skip .site-content{
+    filter:none;
+    opacity:1;
+    pointer-events:auto;
+    transition:none;
+  }
+  .gate{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% 20%, #fbf4de 0%, var(--parchment) 55%, var(--parchment-deep) 100%);
+    opacity:1;
+    transition:opacity 0.5s ease, visibility 0.5s ease;
+  }
+  .gate.gate-hidden{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+  .gate-card{
+    max-width:420px;
+    width:100%;
+    text-align:center;
+    background:linear-gradient(155deg, var(--vellum) 0%, var(--parchment) 100%);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:36px 28px 30px;
+    box-shadow:0 14px 40px var(--shadow);
+    animation:gateIn 0.6s ease both;
+  }
+  @keyframes gateIn{
+    from{opacity:0; transform:translateY(14px) scale(0.98);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  .gate-orn{
+    font-size:1.6rem;
+    color:var(--bronze-bright);
+    margin-bottom:10px;
+  }
+  .gate-title{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:1.4rem;
+    margin:0 0 10px;
+    letter-spacing:0.3px;
+  }
+  .gate-desc{
+    font-size:0.95rem;
+    color:var(--ink-soft);
+    margin:0 0 22px;
+    line-height:1.5;
+  }
+  .gate-btn{
+    font-family:'Cinzel', serif;
+    font-size:0.9rem;
+    letter-spacing:0.3px;
+    color:#fff;
+    background:linear-gradient(90deg, var(--bronze), var(--ember));
+    border:none;
+    border-radius:26px;
+    padding:14px 32px;
+    cursor:pointer;
+    box-shadow:0 4px 12px var(--shadow);
+    transition:transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  }
+  .gate-btn:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 6px 16px var(--shadow);}
+  .gate-btn:active:not(:disabled){transform:translateY(0);}
+  .gate-btn:focus-visible{outline:2px solid var(--ember); outline-offset:2px;}
+  .gate-btn:disabled{cursor:default; filter:brightness(0.92);}
+  .gate-count-line{
+    margin:16px 0 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    font-size:0.85rem;
+    color:var(--ink-faint);
+    font-family:'Cinzel', serif;
+  }
+  .gate-count-img{
+    display:inline-block;
+    vertical-align:middle;
+  }
+  .gate-count-fallback{
+    margin:16px 0 0;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    font-style:italic;
+  }
+
+  footer{
+    max-width:640px;
+    margin:36px auto 0;
+    padding:0 18px;
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    font-style:italic;
+  }
+  footer .signature{
+    display:block;
+    margin-top:8px;
+    font-family:'Cinzel', serif;
+    font-style:normal;
+    font-weight:700;
+    font-size:0.72rem;
+    letter-spacing:0.6px;
+    color:var(--bronze);
+  }
+</style>
+</head>
+<body>
+
+<div class="chapter-toast" id="chapterToast" role="status" aria-live="polite">
+  <span class="toast-icon">✦</span>
+  <span class="toast-text" id="chapterToastText"></span>
+</div>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-card">
+    <div class="gate-orn">✦</div>
+    <h2 class="gate-title" id="gateTitle">Welcome</h2>
+    <p class="gate-desc">Tap below to see the event timeline — what's happening now, what's next.</p>
+    <button class="gate-btn" id="gateBtn" type="button">⚔️ Enter the Website</button>
+    <p class="gate-count-line">
+      <img class="gate-count-img" id="gateBadge" alt="number of people who have entered">
+      <span>people have entered</span>
+    </p>
+    <p class="gate-count-fallback" id="gateBadgeFallback" style="display:none;">Live count unavailable right now — you can still enter.</p>
+  </div>
+</div>
+
+<div class="site-content" id="siteContent">
+
+<a class="skip-link" href="#heroSlot">Skip to current chapter</a>
+
+<header>
+  <h1><span class="orn">✦</span>Monument<span class="orn">✦</span></h1>
+  <p class="tagline">Kingdom event timeline — Rise of Kingdoms server time</p>
+  <div class="now-strip">Now: <b id="nowClock">—</b></div>
+</header>
+
+<noscript>
+  <style>.gate{display:none;} html.gate-locked .site-content{filter:none; opacity:1; pointer-events:auto;} html.gate-locked, html.gate-locked body{overflow:auto; height:auto;}</style>
+  <div class="noscript-banner">This timeline updates live with JavaScript enabled. Please enable JavaScript to see current chapter times and countdowns.</div>
+</noscript>
+
+<main>
+  <div class="about-toggle" id="aboutToggle" role="button" tabindex="0" aria-expanded="false">
+    <span>What is this page? / How to read it</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="about-body" id="aboutBody">
+    <div class="about-body-inner">
+      <h3>What is this?</h3>
+      <p>A live tracker for your kingdom's <span class="term">Monument</span> event. It shows what chapter is happening right now, what's coming up next, and what's already done — so you always know what to do and how much time you have.</p>
+
+      <h3>The three sections</h3>
+      <ul>
+        <li><span class="term">Top card:</span> the chapter happening right now, with a countdown to when it ends.</li>
+        <li><span class="term">Upcoming:</span> what's coming next. Tap a chapter to see its exact times.</li>
+        <li><span class="term">Completed:</span> chapters already finished. Tap to see the list.</li>
+      </ul>
+
+      <h3>🔑 Bonus windows</h3>
+      <p>Some chapters unlock a bonus a bit after they end (a Pass, Shrine, or Lost Temple). Your alliance needs to be holding it when the timer runs out. You'll see it appear in the top card with its own countdown.</p>
+
+      <h3>Good to know</h3>
+      <ul>
+        <li>Times are in <span class="term">UTC</span> — convert to your own time zone.</li>
+        <li>The page updates itself every minute. No need to refresh.</li>
+        <li>When a chapter ends, the next one starts automatically.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="season-banner" id="seasonBanner">All chapters have concluded — the season has ended.</div>
+
+  <div id="heroSlot"></div>
+
+  <div class="section-label" id="upcomingLabel">Upcoming</div>
+  <div class="up-list" id="upcomingList"></div>
+
+  <div class="section-label">Completed</div>
+  <div class="completed-toggle" id="completedToggle" role="button" tabindex="0" aria-expanded="false">
+    <span id="completedSummary">— chapters completed</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="completed-list" id="completedList">
+    <div class="completed-list-inner" id="completedListInner"></div>
+  </div>
+
+  <div class="section-label">Members</div>
+  <div class="members-card">
+    <p class="members-eyebrow">People who've visited this page</p>
+    <p class="members-count-line">
+      <img class="members-badge-img" id="membersBadge" alt="number of people who have entered">
+      <span>have entered</span>
+    </p>
+    <p class="members-count-fallback" id="membersBadgeFallback" style="display:none;">Live count unavailable right now.</p>
+    <p class="members-note" id="membersNote">This total is shared with every visitor.</p>
+  </div>
+</main>
+
+<footer>All times UTC. Updates automatically — no need to refresh.
+  <span class="signature">✦ Created by XTiT ✦</span>
+</footer>
+
+</div>
+
+<script>
+/* =====================================================================
+   HOW TO UPDATE THIS PAGE
+   ---------------------------------------------------------------------
+   This is the only part of the file you should need to touch later.
+
+   1. When a new chapter opens with an official confirmed time, move it
+      out of `chain` below and into `history` as a completed/fixed entry
+      (once it finishes) — or just leave it in `chain` and let the page
+      auto-advance through it on its own; no edits needed day to day.
+      The page already swaps the "in progress" chapter out for the next
+      one automatically the moment the clock passes its end time, and
+      flashes a banner + a highlight on the hero card so the change is
+      noticeable — you don't need to do anything for that to happen.
+
+   2. To add chapters beyond #21 once Anthropic/RoK announces them,
+      append a new object to the end of `chain`:
+        {n:22, title:"...", sub:"...", hours:120}
+      `hours` is that chapter's official duration. Start/end times are
+      calculated automatically by stacking onto the chapter before it,
+      starting from ANCHOR_START.
+
+   3. `bonus` (optional) marks a capture window that opens some hours
+      after a chapter ends, e.g. a Pass, Shrine, or Lost Temple:
+        bonus:[{label:"Shrine", hoursAfter:24}]
+
+   4. If official chapter durations ever change, only ANCHOR_START and
+      the `hours` values need editing — everything downstream (dates,
+      countdowns, completed/upcoming grouping) recalculates itself.
+   ===================================================================== */
+
+/* ---------- CONFIRMED HISTORY (fixed dates, not auto-chained) ---------- */
+const history = [
+  {n:1, title:"The Bud Awakens", sub:"20,000 Governors Entered the Bronze Age", done:"2026-08-17T00:00:00Z"},
+  {n:2, title:"Uncovering Clouds", sub:"All Governors Explored 30,000,000 Fog Blocks Together", done:"2026-08-18T00:00:00Z"},
+  {n:3, title:"Cruel Conflict", sub:"200,000 Barbarian Troops Were Defeated", done:"2026-08-18T00:00:00Z"},
+  {n:4, title:"Iron Age", sub:"4,000 Governors Entered the Iron Age", done:"2026-08-18T00:00:00Z"},
+  {n:5, title:"First Sanctums", sub:"65 Sanctums Occupied For The First Time", done:"2026-08-20T00:00:00Z"},
+  {n:6, title:"Clarion Call", sub:"Your Alliance Defeated 40 Lvl 1+ Barbarian Forts", done:"2026-08-24T00:00:00Z"},
+  {n:7, title:"The Family", sub:"30 Alliances Have 65 Members", done:"2026-08-24T00:00:00Z"},
+  {n:8, title:"Initial Expansion", sub:"500 Alliance Flags Built in the Kingdom", done:"2026-08-25T00:00:00Z"},
+  {n:9, title:"Blessings of the Altars", sub:"Your Alliance Controlled an Altar at the End", done:"2026-08-30T00:00:00Z"},
+  {n:10, title:"Dark Age", sub:"1,000 Governors Entered the Dark Age", done:"2026-08-30T00:00:00Z"},
+  {n:11, title:"Siegecraft", sub:"Your Alliance Defeated 100 Lvl 2+ Barbarian Forts", done:"2026-09-03T00:00:00Z"},
+  {n:12, title:"Wild Competition", sub:"Compete to Enter the Top 20 Alliances", done:"2026-09-08T00:00:00Z"},
+];
+
+/* ---------- AUTO-CHAINED CHAPTERS ----------
+   Anchor = confirmed start of Chapter 13 (its end minus its duration).
+   From here, every following chapter's start/end is computed automatically
+   by stacking each chapter's official duration back-to-back. As real time
+   passes, each chapter's status (upcoming -> in progress -> completed)
+   updates itself and the next chapter opens automatically — no manual
+   input needed to "continue" the event. */
+const ANCHOR_START = new Date("2026-09-08T13:10:00Z"); // Chapter 13 opens here
+
+const chain = [
+  {n:13, title:"None Shall Pass", sub:"Your Alliance Controlled a Level 2 Pass at the End", hours:120},
+  {n:14, title:"Barbarian Buster", sub:"All Governors Defeated 40,000 Lvl 18+ Barbarian Troops", hours:120},
+  {n:15, title:"Vanishing Threats", sub:"Your Alliance Defeated 100 Lvl 3+ Barbarian Forts", hours:96,
+    bonus:[{label:"Level 3 Pass", hoursAfter:24}]},
+  {n:16, title:"Glory of the Shrines", sub:"Your Alliance Controlled a Shrine at the End", hours:168,
+    bonus:[{label:"Shrine", hoursAfter:24}]},
+  {n:17, title:"Feudal Age", sub:"200 Governors Entered the Feudal Age", hours:120},
+  {n:18, title:"Coup de Grace", sub:"Your Alliance Defeated 50 Lvl 4+ Barbarian Forts", hours:96},
+  {n:19, title:"Ultimate Clarity", sub:"Explored All Fog Blocks in the Kingdom", hours:168},
+  {n:20, title:"The Great Empire", sub:"8 Alliances Have 90 Members", hours:240,
+    bonus:[{label:"Lost Temple", hoursAfter:24}]},
+  {n:21, title:"The Last Golden Apple", sub:"Your Alliance Controlled the Lost Temple at the End", hours:240},
+];
+
+// Compute start/end for every chained chapter automatically
+(function buildChain(){
+  let cursor = new Date(ANCHOR_START);
+  chain.forEach(ch => {
+    ch.start = new Date(cursor);
+    ch.end = new Date(cursor.getTime() + ch.hours*3600*1000);
+    if(ch.bonus){
+      ch.bonus.forEach(b => { b.time = new Date(ch.end.getTime() + b.hoursAfter*3600*1000); });
+    }
+    cursor = new Date(ch.end);
+  });
+})();
+
+const SEASON_END = chain[chain.length-1].end;
+
+/* ---------- helpers ---------- */
+function fmtShort(d){
+  const opts = {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'UTC'};
+  const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(d);
+  const get = t => (parts.find(p=>p.type===t)||{}).value || '';
+  return `${get('month')} ${get('day')}, ${get('hour')}:${get('minute')} UTC`;
+}
+function fmtCountdown(ms){
+  if(ms <= 0) return "0 minutes";
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [];
+  if(days) parts.push(days + (days === 1 ? " day" : " days"));
+  if(hours || days) parts.push(hours + (hours === 1 ? " hour" : " hours"));
+  parts.push(minutes + (minutes === 1 ? " minute" : " minutes"));
+  return parts.join(", ");
+}
+function fmtCountdownHTML(ms){
+  if(ms <= 0) return `<span class="num">0</span> minutes`;
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [];
+  if(days) parts.push(`<span class="num">${days}</span> ${days === 1 ? "day" : "days"}`);
+  if(hours || days) parts.push(`<span class="num">${hours}</span> ${hours === 1 ? "hour" : "hours"}`);
+  parts.push(`<span class="num">${minutes}</span> ${minutes === 1 ? "minute" : "minutes"}`);
+  return parts.join(", ");
+}
+function fmtClock(d){
+  const opts = {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'UTC'};
+  const parts = new Intl.DateTimeFormat('en-CA', opts).formatToParts(d);
+  const get = t => parts.find(p=>p.type===t).value;
+  return `${get('year')}/${get('month')}/${get('day')} — ${get('hour')}:${get('minute')}:${get('second')} UTC`;
+}
+const nowClock = document.getElementById('nowClock');
+const seasonBanner = document.getElementById('seasonBanner');
+const heroSlot = document.getElementById('heroSlot');
+const upcomingLabel = document.getElementById('upcomingLabel');
+const upcomingList = document.getElementById('upcomingList');
+const completedToggle = document.getElementById('completedToggle');
+const completedSummary = document.getElementById('completedSummary');
+const completedList = document.getElementById('completedList');
+const completedListInner = document.getElementById('completedListInner');
+const chapterToast = document.getElementById('chapterToast');
+const chapterToastText = document.getElementById('chapterToastText');
+
+const openUpCards = new Set();
+let completedOpen = false;
+
+// Tracks which chapter was live on the previous render so we can detect
+// the automatic hand-off from one chapter to the next and announce it.
+let lastLiveChapterNum = undefined; // undefined = not yet initialized
+let toastTimer = null;
+
+function announceChapterChange(newChapter, seasonJustEnded){
+  clearTimeout(toastTimer);
+  if(seasonJustEnded){
+    chapterToastText.innerHTML = `<b>Season complete</b>All chapters have concluded.`;
+  } else if(newChapter){
+    chapterToastText.innerHTML = `<b>Chapter ${newChapter.n} has begun</b>${newChapter.title}`;
+  } else {
+    return;
+  }
+  chapterToast.classList.add('show');
+  toastTimer = setTimeout(() => chapterToast.classList.remove('show'), 6000);
+}
+
+function render(){
+  const now = new Date();
+  nowClock.textContent = fmtClock(now);
+  const seasonOver = now >= SEASON_END;
+  seasonBanner.style.display = seasonOver ? 'block' : 'none';
+
+  // classify chain chapters
+  const live = chain.find(ch => now >= ch.start && now < ch.end);
+  const doneChain = chain.filter(ch => now >= ch.end);
+  const upcomingChain = chain.filter(ch => now < ch.start);
+
+  // ---- detect automatic chapter hand-off ----
+  const currentLiveNum = live ? live.n : (seasonOver ? 'season-over' : null);
+  if(lastLiveChapterNum !== undefined && currentLiveNum !== lastLiveChapterNum){
+    if(seasonOver && currentLiveNum === 'season-over'){
+      announceChapterChange(null, true);
+    } else if(live){
+      announceChapterChange(live, false);
+    }
+  }
+  lastLiveChapterNum = currentLiveNum;
+
+  /* ---------- hero ---------- */
+  const heroJustChanged = heroSlot.dataset.liveNum !== undefined && heroSlot.dataset.liveNum !== String(currentLiveNum);
+  heroSlot.innerHTML = '';
+  if(live){
+    const bonusHTML = (live.bonus||[]).map(b=>{
+      const opened = now >= b.time;
+      if(opened){
+        return `<div class="hero-capture opened">
+          <p class="cap-label">${b.label}</p>
+          <p class="cap-status">Open now — go capture it</p>
+        </div>`;
+      }
+      return `<div class="hero-capture">
+        <p class="cap-label">🔑 ${b.label}</p>
+        <p class="cap-time">Opens: ${fmtShort(b.time)}</p>
+        <p class="cap-time">${fmtCountdownHTML(b.time - now)} left</p>
+      </div>`;
+    }).join('');
+    const pct = Math.min(100, Math.max(0, ((now - live.start) / (live.end - live.start)) * 100));
+    heroSlot.innerHTML = `
+      <div class="hero${heroJustChanged ? ' just-changed' : ''}">
+        <p class="hero-eyebrow">Chapter ${live.n} · in progress</p>
+        <h2 class="hero-title">${live.title}</h2>
+        <p class="hero-sub">${live.sub}</p>
+        <div class="hero-progress-wrap">
+          <div class="hero-progress-track"><div class="hero-progress-fill" style="width:${pct}%"></div></div>
+          <span class="hero-progress-pct">${Math.round(pct)}%</span>
+        </div>
+        <div class="hero-meta">
+          <span>Opened: ${fmtShort(live.start)}</span>
+          <span class="hero-countdown">Ends: ${fmtShort(live.end)}</span>
+        </div>
+        <div class="hero-countdown-line">${fmtCountdownHTML(live.end - now)} left</div>
+        ${bonusHTML}
+      </div>`;
+  } else if(upcomingChain.length){
+    const next = upcomingChain[0];
+    heroSlot.innerHTML = `
+      <div class="hero">
+        <p class="hero-eyebrow">Chapter ${next.n} · opens next</p>
+        <h2 class="hero-title">${next.title}</h2>
+        <p class="hero-sub">${next.sub}</p>
+        <div class="hero-meta" style="margin-top:4px;">
+          <span>Opens: ${fmtShort(next.start)}</span>
+        </div>
+        <div class="hero-countdown-line">${fmtCountdownHTML(next.start - now)} until it opens</div>
+      </div>`;
+  } else {
+    heroSlot.innerHTML = `
+      <div class="hero${heroJustChanged ? ' just-changed' : ''}">
+        <p class="hero-eyebrow">Season complete</p>
+        <h2 class="hero-title">All chapters concluded</h2>
+        <p class="hero-sub">The last chapter ended ${fmtShort(SEASON_END)}.</p>
+      </div>`;
+  }
+  heroSlot.dataset.liveNum = String(currentLiveNum);
+
+  /* ---------- upcoming list (excludes the live chapter, shown in hero) ---------- */
+  upcomingLabel.style.display = upcomingChain.length ? 'flex' : 'none';
+  upcomingList.innerHTML = '';
+  upcomingChain.forEach(ch => {
+    const cardId = 'up-' + ch.n;
+    const isOpen = openUpCards.has(cardId);
+    const card = document.createElement('div');
+    card.className = 'up-card' + (isOpen ? ' open' : '');
+    card.tabIndex = 0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-expanded', isOpen);
+    card.dataset.id = cardId;
+
+    // Bonus/capture info now shown ONLY inside the expanded body (not in the collapsed header preview)
+    const bonusLines = (ch.bonus||[]).map(b => `<p class="bonus-line">🔑 ${b.label} opens ${fmtShort(b.time)}</p>`).join('');
+
+    card.innerHTML = `
+      <div class="up-head">
+        <span class="up-num">${ch.n}</span>
+        <div class="up-titles">
+          <div class="up-title">${ch.title}</div>
+          <div class="up-sub">${ch.sub}</div>
+        </div>
+        <span class="up-when"><span class="date">${fmtShort(ch.start)}</span></span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="up-body"><div class="up-body-inner">
+        <p>Opens: ${fmtShort(ch.start)}</p>
+        <p>Ends: ${fmtShort(ch.end)}</p>
+        ${bonusLines}
+      </div></div>
+    `;
+    const body = card.querySelector('.up-body');
+    if(isOpen){
+      requestAnimationFrame(()=>{ body.style.maxHeight = body.scrollHeight + 'px'; });
+    }
+    upcomingList.appendChild(card);
+  });
+
+  /* ---------- completed summary ---------- */
+  const doneRows = [
+    ...history.map(h => ({n:h.n, title:h.title, date:new Date(h.done)})),
+    ...doneChain.map(c => ({n:c.n, title:c.title, date:c.end}))
+  ];
+  completedSummary.textContent = `${doneRows.length} chapter${doneRows.length===1?'':'s'} completed`;
+  completedListInner.innerHTML = doneRows.map(r => `
+    <div class="done-row">
+      <span class="name">${r.n}. ${r.title}</span>
+      <span class="date">${fmtShort(r.date)}</span>
+    </div>
+  `).join('');
+  if(completedOpen){
+    completedList.style.maxHeight = completedList.scrollHeight + 'px';
+  }
+}
+
+upcomingList.addEventListener('click', e => {
+  const card = e.target.closest('.up-card');
+  if(!card) return;
+  toggleUp(card);
+});
+upcomingList.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){
+    const card = e.target.closest('.up-card');
+    if(!card) return;
+    e.preventDefault();
+    toggleUp(card);
+  }
+});
+function toggleUp(card){
+  const body = card.querySelector('.up-body');
+  const id = card.dataset.id;
+  const isOpen = card.classList.contains('open');
+  if(isOpen){
+    body.style.maxHeight = null;
+    card.classList.remove('open');
+    card.setAttribute('aria-expanded','false');
+    openUpCards.delete(id);
+  } else {
+    card.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    card.setAttribute('aria-expanded','true');
+    openUpCards.add(id);
+  }
+}
+
+function toggleCompleted(){
+  completedOpen = !completedOpen;
+  completedToggle.setAttribute('aria-expanded', completedOpen);
+  completedToggle.querySelector('.chevron').style.transform = completedOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  completedList.classList.toggle('open', completedOpen);
+  completedList.style.maxHeight = completedOpen ? completedList.scrollHeight + 'px' : null;
+}
+completedToggle.addEventListener('click', toggleCompleted);
+completedToggle.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleCompleted(); }
+});
+
+/* ---------- about section toggle ---------- */
+const aboutToggle = document.getElementById('aboutToggle');
+const aboutBody = document.getElementById('aboutBody');
+let aboutOpen = false;
+function toggleAbout(){
+  aboutOpen = !aboutOpen;
+  aboutToggle.classList.toggle('open', aboutOpen);
+  aboutToggle.setAttribute('aria-expanded', aboutOpen);
+  aboutBody.classList.toggle('open', aboutOpen);
+  aboutBody.style.maxHeight = aboutOpen ? aboutBody.scrollHeight + 'px' : null;
+}
+aboutToggle.addEventListener('click', toggleAbout);
+aboutToggle.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleAbout(); }
+});
+
+/* ---------------------------------------------------------------------
+   ENTRY GATE + SHARED MEMBER COUNTER (image-based, no CORS needed)
+   ---------------------------------------------------------------------
+   The page is locked behind a gate on load. Pressing "Enter the
+   Website" is the one action that both unlocks the page AND counts
+   the visitor as a member — using the free, keyless CountAPI service
+   (countapi.mileshilliard.com) so the total is the SAME number for
+   every visitor, not just stored in one person's browser.
+
+   Why images instead of fetch(): the earlier version used
+   JavaScript's fetch() to read the count as JSON. That requires the
+   counter service to send CORS headers granting this page permission
+   to read the response — and small free services often don't set
+   those up correctly, which silently breaks fetch() in the browser
+   even though the API itself is online (this was very likely why it
+   showed "unavailable"). Loading the count as an <img> sidesteps that
+   entirely: browsers are allowed to *display* a cross-origin image
+   without any CORS headers, they just can't let JavaScript *read its
+   pixels* — which is not something this page needs to do. CountAPI's
+   "shield" endpoint renders the current count as a small SVG badge
+   image, so that's what's used here.
+
+   LIVE: the badge image is reloaded automatically every 30 seconds
+   (with a cache-busting query param), so anyone with the page open
+   sees the total tick up as new people enter, without refreshing.
+
+   CORRECT: each browser is only ever counted once, tracked with a
+   localStorage flag — pressing the gate button again later (or
+   reloading) unlocks the page without adding another count.
+
+   RESILIENT: if the badge image fails to load for any reason, a
+   plain text fallback appears instead, and the gate never blocks
+   entry just because the counter had trouble.
+
+   To reset the counter or start your own: change COUNTER_KEY to any
+   unique text (e.g. your clan/kingdom name) — CountAPI creates a
+   fresh counter automatically the first time it's used. Keys are
+   public, so keep it unique to avoid colliding with someone else's.
+   ------------------------------------------------------------------- */
+const COUNTER_BASE = "https://countapi.mileshilliard.com/api/v1";
+const COUNTER_KEY = "monument_rok_xtit_kingdom_timeline_members";
+const BADGE_PARAMS = "text=%E2%9C%A6&bgcolor=a1452f&textcolor=f7efd9&style=flat"; // ✦ symbol as the minimal label
+const COUNTER_HIT_URL = `${COUNTER_BASE}/hit/${COUNTER_KEY}`; // fire-and-forget, response not read
+const COUNTER_SHIELD_URL = `${COUNTER_BASE}/get/${COUNTER_KEY}/shield?${BADGE_PARAMS}`;
+const COUNTED_FLAG = "monument_member_counted";
+const GATE_SEEN_FLAG = "monument_gate_seen"; // set the instant "Enter" is clicked — gate must never reappear after that, network or no network
+const POLL_MS = 30000; // reload the badge image every 30s to stay live
+
+const gate = document.getElementById('gate');
+const gateBtn = document.getElementById('gateBtn');
+const gateBadge = document.getElementById('gateBadge');
+const gateBadgeFallback = document.getElementById('gateBadgeFallback');
+const membersBadge = document.getElementById('membersBadge');
+const membersBadgeFallback = document.getElementById('membersBadgeFallback');
+const membersNote = document.getElementById('membersNote');
+
+function refreshBadges(){
+  const bust = Date.now(); // cache-bust so the image actually reloads
+  const url = `${COUNTER_SHIELD_URL}&_=${bust}`;
+  gateBadge.src = url;
+  membersBadge.src = url;
+
+  // Some sandboxed/embedded viewers silently drop cross-origin requests
+  // without ever firing a load or error event on the <img>, which would
+  // otherwise leave the badge stuck invisible forever. If neither event
+  // fires within a few seconds, show the fallback text instead.
+  [gateBadge, membersBadge].forEach((img, i) => {
+    const fallback = i === 0 ? gateBadgeFallback : membersBadgeFallback;
+    setTimeout(() => {
+      if(!img.complete || img.naturalWidth === 0){
+        img.style.display = 'none';
+        fallback.style.display = '';
+      }
+    }, 4000);
+  });
+}
+
+[gateBadge, membersBadge].forEach((img, i) => {
+  const fallback = i === 0 ? gateBadgeFallback : membersBadgeFallback;
+  img.addEventListener('load', () => {
+    img.style.display = '';
+    fallback.style.display = 'none';
+  });
+  img.addEventListener('error', () => {
+    img.style.display = 'none';
+    fallback.style.display = '';
+  });
+});
+
+// Kept in a shared array so in-flight pixel requests aren't garbage
+// collected (and silently aborted) before they finish loading.
+const pendingPixels = [];
+
+function enterSite(){
+  // Dismiss the gate for good the instant the button is pressed. This must
+  // not depend on the counter network call succeeding — a slow connection,
+  // blocked request, or offline moment should never bring the gate back on
+  // a later visit for someone who already entered once.
+  localStorage.setItem(GATE_SEEN_FLAG, "1");
+
+  const alreadyCounted = localStorage.getItem(COUNTED_FLAG) === "1";
+  if(!alreadyCounted){
+    const pixel = new Image();
+    pendingPixels.push(pixel);
+    pixel.onload = () => {
+      // Only mark this device as counted once the hit is confirmed to
+      // have actually reached the server — if it silently failed, we
+      // want it to retry on the next visit rather than under-count.
+      localStorage.setItem(COUNTED_FLAG, "1");
+      membersNote.textContent = "You're counted in — this total is shared with every visitor.";
+      refreshBadges();
+    };
+    pixel.onerror = () => {
+      membersNote.textContent = "Couldn't confirm your entry with the counter — you're still in, we'll retry next visit.";
+    };
+    pixel.src = `${COUNTER_HIT_URL}?_=${Date.now()}`;
+  }
+  unlockSite();
+}
+
+function unlockSite(){
+  document.documentElement.classList.remove('gate-locked');
+  gate.classList.add('gate-hidden');
+}
+
+gateBtn.addEventListener('click', enterSite);
+
+if(localStorage.getItem(COUNTED_FLAG) === "1"){
+  membersNote.textContent = "You're counted in — this total is shared with every visitor.";
+}
+
+refreshBadges();
+setInterval(refreshBadges, POLL_MS);
+
+render();
+setInterval(render, 60000); // refresh every minute so the clock and countdowns update live
+</script>
+</body>
+</html>
